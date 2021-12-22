@@ -1,8 +1,5 @@
 # introduction-to-clojure
 
-Code to accompany the [Introduction to Clojure course][course], part
-of [PurelyFunctional.tv Online Mentoring][mentoring].
-
 [course]: https://purelyfunctional.tv/courses/intro-to-clojure
 [mentoring]: https://purelyfunctional.tv/
 
