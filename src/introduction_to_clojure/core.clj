@@ -196,5 +196,86 @@
                      :rackids racks}]
         (delivery receipt)))))
 
+(defn bake-cake []
+  (add :flour)
+  (add :flour)
+  (add :egg)
+  (add :egg)
+  (add :milk)
+  (add :sugar)
+  (mix)
+  (pour-into-pan)
+  (bake-pan 25)
+  (cool-pan))
+
+(defn scooped? [ingredient]
+  (cond
+    (= ingredient :milk)
+    true
+    (= ingredient :flour)
+    true
+    (= ingredient :sugar)
+    true
+    :else
+    false))
+
+(defn squeezed? [ingredient]
+  (= ingredient :egg))
+
+(defn simple? [ingredient]
+  (= ingredient :butter))
+
+
+(defn add-scooped
+  ([ingredient] (add-scooped 1))
+  ([ingredient amount]
+    (if (scooped? ingredient)
+      (dotimes [e amount]
+        (grab :cup)
+        (scoop ingredient)
+        (add-to-bowl)
+        (release))
+      (do
+        (println "Error")
+        :error))))
+
+(defn add-squeezed
+  ([ingredient] (add-squeezed ingredient 1))
+  ([ingredient amount]
+    (if (squeezed? ingredient)
+      (dotimes [e amount]
+        (grab ingredient)
+        (squeeze)
+        (add-to-bowl))
+      (do
+        (println "Error")
+        :error))))
+
+(defn add-simple
+  ([ingredient] (add-simple ingredient 1))
+  ([ingredient amount]
+    (if (simple? ingredient)
+      (dotimes [e amount]
+        (grab ingredient)
+        (add-to-bowl))
+      (do
+        (println "Error")
+        :error))))
+
+(defn add
+  ([ingredient] (add ingredient 1))
+  ([ingredient amount]
+    (cond
+      (squeezed? ingredient)
+      (add-squeezed ingredient amount)
+      (simple? ingredient)
+      (add-simple ingredient amount)
+      (scooped? ingredient)
+      (add-scooped ingredient amount)
+      :else
+      (do
+        (println "Unknown ingredient:" ingredient)
+        :error))))
+
 (defn -main []
   (day-at-the-bakery))
