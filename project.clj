@@ -7,7 +7,8 @@
             [org.clojure/core.unify "0.5.7"]]
   :dependencies [[org.clojure/clojure "1.10.0"]
                  [lispcast/bakery "1.0.0"]
-                 [com.bhauman/rebel-readline "0.1.4"]]
+                 [com.bhauman/rebel-readline "0.1.4"]
+                 [cider/cider-nrepl "0.24.0"]]
   :aliases {"repl" ["trampoline" "run" "-m" "introduction-to-clojure.repl"]}
 
   :main introduction-to-clojure.core)
