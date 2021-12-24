@@ -5,6 +5,13 @@
   (apply println messages)
   :error)
 
+(def pantry-ingredients #{:flour :sugar})
+(def fridge-ingredients #{:milk :egg})
+
+(def simple-ingredients #{:butter})
+(def squeezed-ingredients #{:egg})
+(def scooped-ingredients #{:milk :flour :sugar})
+
 (defn add-egg []
   (grab :egg)
   (squeeze)
@@ -33,21 +40,13 @@
   (add-to-bowl))
 
 (defn scooped? [ingredient]
-  (cond
-    (= ingredient :milk)
-    true
-    (= ingredient :flour)
-    true
-    (= ingredient :sugar)
-    true
-    :else
-    false))
+  (contains? scooped-ingredients ingredient))
 
 (defn squeezed? [ingredient]
-  (= ingredient :egg))
+  (contains? squeezed-ingredients ingredient))
 
 (defn simple? [ingredient]
-  (= ingredient :butter))
+  (contains? simple-ingredients ingredient))
 
 (defn add-eggs [n]
   (dotimes [e n]
@@ -150,3 +149,9 @@
 (defn -main []
   (bake-cake)
   (bake-cookies))
+
+(defn from-pantry? [ingredient]
+  (contains? pantry-ingredients ingredient))
+
+(defn from-fridge? [ingredient]
+  (contains? fridge-ingredients ingredient))
