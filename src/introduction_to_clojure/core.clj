@@ -1,4 +1,4 @@
- (ns introduction-to-clojure.core
+(ns introduction-to-clojure.core
   (:require [bakery.core :refer :all]))
 
 (defn error [& messages]
@@ -250,41 +250,34 @@
   (doseq [ingredient all-ingredients]
     (unload-amount ingredient (get shopping ingredient 0))))
 
-(defn fetch-list-amount [shopping amount]
-  (dotimes [i amount]
-    (fetch-list shopping)))
-
-; ({:orderid 8782,
-;   :address "530 Cyber Dr",
-;   :items {:cake 13, :cookies 21}}
-;  {:orderid 8784,
-;   :address "368 Robot Ln",
-;   :items {:cake 14, :cookies 14}}
-;  {:orderid 8786, :address "392 Cyber Dr", :items {:cake 6, :cookies 5}}
-;  {:orderid 8788,
-;   :address "599 Electro Pkwy",
-;   :items {:cake 19, :cookies 8}}
-;  {:orderid 8790,
-;   :address "408 Robot Ln",
-;   :items {:cake 16, :cookies 15}}
-;  {:orderid 8792,
-;   :address "186 Robot Ln",
-;   :items {:cake 18, :cookies 7}}
-;  {:orderid 8794,
-;   :address "513 Servo St",
-;   :items {:cake 24, :cookies 6}}
-;  {:orderid 8796,
-;   :address "669 Cyber Dr",
-;   :items {:cake 1, :cookies 17}}
-;  {:orderid 8798, :address "900 Servo St", :items {:cookies 18}}
-;  {:orderid 8800,
-;   :address "508 Robot Ln",
-;   :items {:cake 24, :cookies 12}})
+; (defn fetch-list-amount [shopping amount]
+;   (dotimes [i amount]
+;     (fetch-list shopping)))
 
 (defn prepare-recipes [items]
   (doseq [recipe (keys items)]
-    (fetch-list-amount (get (get recipes recipe) :ingredients) (get items recipe))
+    (let [amount (get items recipe)
+          ingredients (get (get recipes recipe) :ingredients)]
+      (fetch-list-amount ingredients amount))
     ))
+
+(def items {:egg 2 :flour 5})
+(def item2 {:egg 2 :flour 5})
+(def item3 {:egg 2 :flour 5})
+
+(defn add-items [start item]
+  (reduce (fn [acc [k v]]
+          (into acc {k (+ (get acc k 0) v)}))
+          start
+          item))
+
+(reduce add-items [items item2 item3]) ; {:egg 6, :flour 15}
+
+
+; (reduce (fn [acc [k v]]
+;           (into acc {k (* v 10)}))
+;         {}
+;         items)
 
 (defn day-at-the-bakery []
   (let [orders (get-morning-orders)]
