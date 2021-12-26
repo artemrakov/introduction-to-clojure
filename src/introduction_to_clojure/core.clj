@@ -250,25 +250,27 @@
   (doseq [ingredient all-ingredients]
     (unload-amount ingredient (get shopping ingredient 0))))
 
-(defn add-items [start item]
-  (reduce (fn [acc [k v]]
-          (into acc {k (+ (get acc k 0) v)}))
-          start
-          item))
+(defn add-ingredients [first-item second-item]
+  (merge-with + first-item second-item))
 
-(defn prepare-recipes [items]
-  (fetch-list (reduce add-items (map (fn [[recipe amount]]
-                                       (reduce (fn [acc [item item-amount]]
-                                                 (into acc {item (* item-amount amount)}))
-                                               {}
-                                               (get (get recipes recipe) :ingredients))
-                                       ) items))))
+(defn multiply-ingredients [ingredients amount]
+  (into {}
+        (for [[item item-amount] ingredients]
+          [item (* item-amount amount)])))
+
+(defn item->ingredients [item]
+  (get (get recipes item) :ingredients))
+
+(defn order->ingredients [order]
+  (let [items (get order :items)]
+    (reduce add-ingredients (for [[item amount] items]
+                              (multiply-ingredients (item->ingredients item) amount)))))
 
 (defn day-at-the-bakery []
   (let [orders (get-morning-orders)]
+    (fetch-list (reduce add-ingredients (map order->ingredients orders)))
     (doseq [order orders]
       (let [items (get order :items)]
-        (prepare-recipes items)
         (let [rack-ids (flatten (map (fn [[key value]] (bake-amount key value)) items))]
           (delivery {
                      :orderid (get order :orderid)
