@@ -277,4 +277,3 @@
                      :address (get order :address)
                      :rackids rack-ids
                      }))))))
-(day-at-the-bakery)
