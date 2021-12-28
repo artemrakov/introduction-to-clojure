@@ -46,34 +46,6 @@
         i (range (second kv))]
     (bake (first kv))))
 
-
-(defn add-egg []
-  (grab :egg)
-  (squeeze)
-  (add-to-bowl))
-
-(defn add-flour []
-  (grab :cup)
-  (scoop :flour)
-  (add-to-bowl)
-  (release))
-
-(defn add-milk []
-  (grab :cup)
-  (scoop :milk)
-  (add-to-bowl)
-  (release))
-
-(defn add-sugar []
-  (grab :cup)
-  (scoop :sugar)
-  (add-to-bowl)
-  (release))
-
-(defn add-butter []
-  (grab :butter)
-  (add-to-bowl))
-
 (defn scooped? [ingredient]
   (contains? scooped-ingredients ingredient))
 
@@ -82,31 +54,6 @@
 
 (defn simple? [ingredient]
   (contains? simple-ingredients ingredient))
-
-(defn add-eggs [n]
-  (dotimes [e n]
-    (add-egg))
-  :ok)
-
-(defn add-flour-cups [n]
-  (dotimes [e n]
-    (add-flour))
-  :ok)
-
-(defn add-milk-cups [n]
-  (dotimes [e n]
-    (add-milk))
-  :ok)
-
-(defn add-sugar-cups [n]
-  (dotimes [e n]
-    (add-sugar))
-  :ok)
-
-(defn add-butters [n]
-  (dotimes [e n]
-    (add-butter))
-  :ok)
 
 (defn add-squeezed
   ([ingredient amount]
@@ -160,30 +107,6 @@
      (add-simple ingredient amount)
      :else
      (error "I do not know the ingredient" ingredient))))
-
-(defn bake-cake []
-  (add :egg 2)
-  (add :flour 2)
-  (add :milk)
-  (add :sugar)
-  (mix)
-  (pour-into-pan)
-  (bake-pan 25)
-  (cool-pan))
-
-(defn bake-cookies []
-  (add :egg)
-  (add :flour)
-  (add :sugar)
-  (add :butter)
-  (mix)
-  (pour-into-pan)
-  (bake-pan 30)
-  (cool-pan))
-
-(defn -main []
-  (bake-cake)
-  (bake-cookies))
 
 (defn from-pantry? [ingredient]
   (contains? pantry-ingredients ingredient))
@@ -280,4 +203,5 @@
                    :rackids rack-ids
                    })))))
 
-(day-at-the-bakery)
+(defn -main []
+  (day-at-the-bakery))
