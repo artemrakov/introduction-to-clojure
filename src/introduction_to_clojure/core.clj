@@ -29,7 +29,7 @@
               :baking-time 30})
 
 (def recipes {:cake cake
-               :cookies cookies})
+              :cookies cookies})
 
 (defn bake [item]
   (let [recipe (get recipes item)
@@ -41,13 +41,11 @@
   (bake-pan (get recipe :baking-time))
   (cool-pan)))
 
-(defn bake-amount [item amount]
-  (loop [result '()
-         n amount]
-    (if (= n 0)
-      result
-    (do
-      (recur (merge result (bake item)) (dec n))))))
+(defn bake-items [items]
+  (for [kv items
+        i (range (second kv))]
+    (bake (first kv))))
+
 
 (defn add-egg []
   (grab :egg)
@@ -266,14 +264,20 @@
     (reduce add-ingredients (for [[item amount] items]
                               (multiply-ingredients (item->ingredients item) amount)))))
 
+(defn orders->ingredients [orders]
+  (reduce add-ingredients {}
+          (for [order orders]
+            (order->ingredients order))))
+
 (defn day-at-the-bakery []
   (let [orders (get-morning-orders)]
-    (fetch-list (reduce add-ingredients (map order->ingredients orders)))
+    (fetch-list (orders->ingredients orders))
     (doseq [order orders]
-      (let [items (get order :items)]
-        (let [rack-ids (flatten (map (fn [[key value]] (bake-amount key value)) items))]
-          (delivery {
-                     :orderid (get order :orderid)
-                     :address (get order :address)
-                     :rackids rack-ids
-                     }))))))
+      (let [rack-ids (bake-items (get order :items))]
+        (delivery {
+                   :orderid (get order :orderid)
+                   :address (get order :address)
+                   :rackids rack-ids
+                   })))))
+
+(day-at-the-bakery)
