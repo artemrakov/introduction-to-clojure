@@ -21,14 +21,14 @@
                          :milk 1
                          :sugar 1}
            :baking-time 25
-           :recipe [[:egg :flour :milk :sugar]]})
+           :steps [[:egg :flour :milk :sugar]]})
 
 (def cookies {:ingredients {:egg 1
                             :flour 1
                             :sugar 1
                             :butter 1}
               :baking-time 30
-              :recipe [[:egg :flour :sugar :butter]]})
+              :steps [[:egg :flour :sugar :butter]]})
 
 (def brownies {:ingredients {:egg 2
                              :flour 2
@@ -37,22 +37,22 @@
                              :butter 2
                              :cocoa 2}
                :baking-time 35
-               :recipe [[:butter :sugar :cocoa] [:flour :egg :milk]]})
+               :steps [[:butter :sugar :cocoa] [:flour :egg :milk]]})
 
-(def menu {:cake cake
-           :cookies cookies
-           :brownies brownies})
+(def recipes {:cake cake
+              :cookies cookies
+              :brownies brownies})
 
 (defn bake [item]
-  (let [food (menu item)
-        ingredients (food :ingredients)
-        recipe (food :recipe)]
-    (doseq [step recipe]
+  (let [recipe (recipes item)
+        ingredients (recipe :ingredients)
+        steps (recipe :steps)]
+    (doseq [step steps]
       (doseq [ingredient step]
         (add ingredient (ingredients ingredient)))
       (mix))
     (pour-into-pan)
-    (bake-pan (food :baking-time))
+    (bake-pan (recipe :baking-time))
     (cool-pan)))
 
 (defn bake-items [items]
@@ -194,7 +194,7 @@
           [item (* item-amount amount)])))
 
 (defn item->ingredients [item]
-  (get (get menu item) :ingredients))
+  (get (get recipes item) :ingredients))
 
 (defn order->ingredients [order]
   (let [items (get order :items)]
