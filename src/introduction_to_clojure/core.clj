@@ -5,13 +5,13 @@
   (apply println messages)
   :error)
 
-(def pantry-ingredients #{:flour :sugar})
+(def pantry-ingredients #{:flour :sugar :cocoa})
 (def fridge-ingredients #{:milk :egg :butter})
 (def all-ingredients (clojure.set/union pantry-ingredients fridge-ingredients))
 
 (def simple-ingredients #{:butter})
 (def squeezed-ingredients #{:egg})
-(def scooped-ingredients #{:milk :flour :sugar})
+(def scooped-ingredients #{:milk :flour :sugar :cocoa})
 
 (def locations {:pantry pantry-ingredients
                 :fridge fridge-ingredients})
@@ -20,26 +20,40 @@
                          :flour 2
                          :milk 1
                          :sugar 1}
-           :baking-time 25})
+           :baking-time 25
+           :recipe [[:egg :flour :milk :sugar]]})
 
 (def cookies {:ingredients {:egg 1
                             :flour 1
                             :sugar 1
                             :butter 1}
-              :baking-time 30})
+              :baking-time 30
+              :recipe [[:egg :flour :sugar :butter]]})
 
-(def recipes {:cake cake
-              :cookies cookies})
+(def brownies {:ingredients {:egg 2
+                             :flour 2
+                             :milk 1
+                             :sugar 1
+                             :butter 2
+                             :cocoa 2}
+               :baking-time 35
+               :recipe [[:butter :sugar :cocoa] [:flour :egg :milk]]})
+
+(def menu {:cake cake
+           :cookies cookies
+           :brownies brownies})
 
 (defn bake [item]
-  (let [recipe (get recipes item)
-        ingredients (get recipe :ingredients)]
-    (doseq [ingredient (keys ingredients)]
-      (add ingredient (get ingredients ingredient)))
-  (mix)
-  (pour-into-pan)
-  (bake-pan (get recipe :baking-time))
-  (cool-pan)))
+  (let [food (menu item)
+        ingredients (food :ingredients)
+        recipe (food :recipe)]
+    (doseq [step recipe]
+      (doseq [ingredient step]
+        (add ingredient (ingredients ingredient)))
+      (mix))
+    (pour-into-pan)
+    (bake-pan (food :baking-time))
+    (cool-pan)))
 
 (defn bake-items [items]
   (for [kv items
@@ -180,7 +194,7 @@
           [item (* item-amount amount)])))
 
 (defn item->ingredients [item]
-  (get (get recipes item) :ingredients))
+  (get (get menu item) :ingredients))
 
 (defn order->ingredients [order]
   (let [items (get order :items)]
@@ -193,7 +207,7 @@
             (order->ingredients order))))
 
 (defn day-at-the-bakery []
-  (let [orders (get-morning-orders)]
+  (let [orders (get-morning-orders-day3)]
     (fetch-list (orders->ingredients orders))
     (doseq [order orders]
       (let [rack-ids (bake-items (get order :items))]
@@ -203,5 +217,6 @@
                    :rackids rack-ids
                    })))))
 
+(day-at-the-bakery)
 (defn -main []
   (day-at-the-bakery))
