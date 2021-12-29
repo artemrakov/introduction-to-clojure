@@ -32,11 +32,11 @@
                              :butter 2
                              :cocoa 2}
                :steps [[:add :butter]
-                       [:add :cocoa]
                        [:add :sugar]
+                       [:add :cocoa]
                        [:mix]
-                       [:add :egg]
                        [:add :flour]
+                       [:add :egg]
                        [:add :milk]
                        [:mix]
                        [:pour]
@@ -77,29 +77,20 @@
                          (add-to-bowl))
                        (release))})
 
-(def actions {:bake bake
-              :pour pour
-              :mix mix
-              :cool cool
-              :add (fn
-                     ([ingredient]
-                      (if (= :all ingredient)
-                        (dotimes)
-                        (add ingredient)))
-                     ([ingredient amount] (add ingredient amount)))
-              })
+(defn perform [ingredients step]
+  (let [action (actions (first step) (fn [ingredients step]
+                                       error "I dont know how to" (first step)))]
+    (action ingredients step)))
 
 (defn bake [item]
   (let [recipe (recipes item)
         ingredients (recipe :ingredients)
         steps (recipe :steps)]
-    (doseq [step steps]
-      (doseq [ingredient step]
-        (add ingredient (ingredients ingredient)))
-      (mix))
-    (pour-into-pan)
-    (bake-pan (recipe :baking-time))
-    (cool-pan)))
+    (last (for [step steps]
+      (perform ingredients step)))))
+
+(status)
+(bake :brownies)
 
 (defn bake-items [items]
   (for [kv items
@@ -124,6 +115,18 @@
      (if (contains? usage ingredient-type)
        ((usage ingredient-type) ingredient amount)
        (error "Unknown ingredient" ingredient)))))
+
+(def actions {:bake (fn [ingedients step] (bake-pan (second step)))
+              :pour (fn [ingedients step] (pour-into-pan))
+              :mix (fn [ingedients step] (mix))
+              :cool (fn [ingedients step] (cool-pan))
+              :add (fn [ingredients step]
+                      (if (and (= 2 (count step))
+                               (= :all (second step)))
+                        (doseq [[ingedient amount] ingredients]
+                          (add ingedient amount))
+                        (add (second step) (ingredients (second step)))))
+              })
 
 (defn load-up-amount [ingredient amount]
   (dotimes [i amount]
@@ -185,6 +188,5 @@
                    :rackids rack-ids
                    })))))
 
-; (day-at-the-bakery)
 (defn -main []
   (day-at-the-bakery))
