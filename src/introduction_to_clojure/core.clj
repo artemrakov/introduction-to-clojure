@@ -89,9 +89,6 @@
     (last (for [step steps]
       (perform ingredients step)))))
 
-(status)
-(bake :brownies)
-
 (defn bake-items [items]
   (for [kv items
         i (range (second kv))]
