@@ -77,23 +77,6 @@
                          (add-to-bowl))
                        (release))})
 
-(defn perform [ingredients step]
-  (let [action (actions (first step) (fn [ingredients step]
-                                       error "I dont know how to" (first step)))]
-    (action ingredients step)))
-
-(defn bake [item]
-  (let [recipe (recipes item)
-        ingredients (recipe :ingredients)
-        steps (recipe :steps)]
-    (last (for [step steps]
-      (perform ingredients step)))))
-
-(defn bake-items [items]
-  (for [kv items
-        i (range (second kv))]
-    (bake (first kv))))
-
 (defn ingredient-storage [ingredient]
   (let [ingredients (get baking :ingredients)
         info (get ingredients ingredient)]
@@ -113,6 +96,10 @@
        ((usage ingredient-type) ingredient amount)
        (error "Unknown ingredient" ingredient)))))
 
+(defn load-up-amount [ingredient amount]
+  (dotimes [i amount]
+    (load-up ingredient)))
+
 (def actions {:bake (fn [ingedients step] (bake-pan (second step)))
               :pour (fn [ingedients step] (pour-into-pan))
               :mix (fn [ingedients step] (mix))
@@ -125,9 +112,22 @@
                         (add (second step) (ingredients (second step)))))
               })
 
-(defn load-up-amount [ingredient amount]
-  (dotimes [i amount]
-    (load-up ingredient)))
+(defn perform [ingredients step]
+  (let [action (actions (first step) (fn [ingredients step]
+                                       error "I dont know how to" (first step)))]
+    (action ingredients step)))
+
+(defn bake [item]
+  (let [recipe (recipes item)
+        ingredients (recipe :ingredients)
+        steps (recipe :steps)]
+    (last (for [step steps]
+      (perform ingredients step)))))
+
+(defn bake-items [items]
+  (for [kv items
+        i (range (second kv))]
+    (bake (first kv))))
 
 (defn unload-amount [ingredient amount]
   (dotimes [i amount]
